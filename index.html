@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FechaOrçamento</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f1f4f9;
+  color: #222;
+}
+
+.container {
+  max-width: 500px;
+  margin: 25px auto;
+  background: white;
+  padding: 24px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px #00000012;
+}
+
+h1 {
+  text-align: center;
+  color: #1769e0;
+}
+
+p {
+  text-align: center;
+  color: #666;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 13px;
+  margin-top: 7px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 8px;
+  background: #1769e0;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#resultado {
+  display: none;
+  margin-top: 20px;
+  padding: 15px;
+  background: #eef5ff;
+  border-radius: 8px;
+  white-space: pre-wrap;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>FechaOrçamento</h1>
+
+<p>Crie orçamentos profissionais em poucos segundos.</p>
+
+<label>Nome do cliente</label>
+<input id="cliente" placeholder="Nome do cliente">
+
+<label>Nome do prestador</label>
+<input id="prestador" placeholder="Seu nome ou empresa">
+
+<label>Serviço</label>
+<input id="servico" placeholder="Ex: Serviço de pintura">
+
+<label>Descrição</label>
+<textarea id="descricao" placeholder="Descreva o serviço"></textarea>
+
+<label>Valor do orçamento (R$)</label>
+<input id="valor" type="number" step="0.01" placeholder="Ex: 350">
+
+<label>WhatsApp do cliente</label>
+<input id="telefone" type="tel" placeholder="DDD + número">
+
+<button onclick="gerarOrcamento()">
+Gerar orçamento
+</button>
+
+<div id="resultado"></div>
+
+<button id="enviar" onclick="enviarWhatsApp()" style="display:none;background:#168b49">
+Enviar pelo WhatsApp
+</button>
+
+</div>
+
+<script>
+let mensagem = "";
+let telefone = "";
+
+function gerarOrcamento() {
+  const cliente = document.getElementById("cliente").value.trim();
+  const prestador = document.getElementById("prestador").value.trim();
+  const servico = document.getElementById("servico").value.trim();
+  const descricao = document.getElementById("descricao").value.trim();
+  const valor = Number(document.getElementById("valor").value);
+
+  telefone = document.getElementById("telefone").value.replace(/\D/g, "");
+
+  if (!cliente || !prestador || !servico || !valor || valor <= 0) {
+    alert("Preencha os campos obrigatórios corretamente.");
+    return;
+  }
+
+  mensagem =
+`*ORÇAMENTO - FECHAORÇAMENTO*
+
+Cliente: ${cliente}
+
+Prestador: ${prestador}
+
+Serviço: ${servico}
+
+Descrição: ${descricao || "Não informada"}
+
+Valor: ${valor.toLocaleString("pt-BR", {style:"currency",currency:"BRL"})}
+
+Obrigado pela preferência!`;
+
+  document.getElementById("resultado").textContent = mensagem;
+  document.getElementById("resultado").style.display = "block";
+  document.getElementById("enviar").style.display = "block";
+}
+
+function enviarWhatsApp() {
+  if (telefone.length < 10 || telefone.length > 13) {
+    alert("Informe um WhatsApp válido com DDD.");
+    return;
+  }
+
+  const numero = telefone.startsWith("55") ? telefone : "55" + telefone;
+
+  window.open(
+    "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem),
+    "_blank"
+  );
+}
+</script>
+
+</body>
+</html>
